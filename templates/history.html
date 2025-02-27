@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Historical Data{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">Historical Weather Data</h1>
+  
+  <!-- Filter form -->
+  <form method="GET" action="{{ url_for('history') }}" class="mb-4">
+    <div class="form-group">
+      <label for="citySelect">Select City:</label>
+      <select name="city" id="citySelect" class="form-control">
+        <option value="">All Cities</option>
+        {% for city in cities %}
+          <option value="{{ city }}" {% if city == selected_city %}selected{% endif %}>{{ city }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+  </form>
+
+  <!-- Historical Data Table -->
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>City</th>
+        <th>Year</th>
+        <th>Month</th>
+        <th>Total Precipitation</th>
+        <th>Rainy Days</th>
+        <th>Max Temp (Monthly)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in data %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+        <td>{{ row[3]|round(1) }} mm</td>
+        <td>{{ row[4] }}</td>
+        <td>{{ row[5]|round(1) if row[5] else "N/A" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{{ url_for('index') }}" class="btn btn-secondary">Back</a>
+{% endblock %}

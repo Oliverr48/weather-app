@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Weather Results{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">Weather Results for {{ city }}</h1>
+  
+  <h2>Temperature Data from {{ start_date }} to {{ end_date }}:</h2>
+  {% if temp_data.daily and temp_data.daily.time %}
+    <ul class="list-group mb-4">
+      {% for i in range(temp_data.daily.time|length) %}
+        <li class="list-group-item">
+          {{ temp_data.daily.time[i] }}: 
+          {% if temp_data.daily.temperature_2m_max[i] is not none %}
+            {{ temp_data.daily.temperature_2m_max[i] }} °C
+          {% else %}
+            No data
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No temperature data found.</p>
+  {% endif %}
+  
+  <h2>Temperature Plot</h2>
+  {% if plot_data %}
+    <img src="data:image/png;base64,{{ plot_data }}" alt="Temperature Plot" class="img-fluid mb-4">
+  {% else %}
+    <p>No temperature plot available.</p>
+  {% endif %}
+  
+  <h2>Rainfall Summary (Rainy Days Per Month)</h2>
+  <table class="table table-bordered mb-4">
+    <thead>
+      <tr>
+        <th>Month</th>
+        <th>Rainy Days</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for mon, days in rainfall_summary.monthly_breakdown.items() %}
+        <tr>
+          <td>{{ mon }}</td>
+          <td>{{ days }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p><strong>Total Precipitation:</strong> {{ rainfall_summary.total_precipitation|round(1) }} mm</p>
+  <p><strong>Total Rainy Days:</strong> {{ rainfall_summary.total_rainy_days }}</p>
+  
+  <a href="{{ url_for('index') }}" class="btn btn-secondary">Back</a>
+{% endblock %}
